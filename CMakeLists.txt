@@ -2,9 +2,9 @@ cmake_minimum_required (VERSION 2.8.10)
 
 project(rpcz)
 
-set(RPCZ_VERSION_MAJOR 0)
-set(RPCZ_VERSION_MINOR 9)
-set(RPCZ_VERSION_PATCH 0)
+set(RPCZ_VERSION_MAJOR 1)
+set(RPCZ_VERSION_MINOR 0)
+set(RPCZ_VERSION_PATCH 1)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
