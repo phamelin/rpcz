@@ -17,6 +17,11 @@ option(rpcz_build_tests "Build rpcz's tests." OFF)
 option(rpcz_build_examples "Build rpcz's examples." OFF)
 option(rpcz_enable_ipv6 "Enable IPv6 protocol." OFF)
 
+# Detect distro
+include(DetectDistro)
+detect_distro(DISTRO_ID DISTRO_RELEASE DISTRO_DESC)
+message(STATUS "Distro is ${DISTRO_DESC}")
+
 if(MSVC)
     option(rpcz_build_static "Build static library." ON)
 else()
@@ -84,22 +89,31 @@ set(CPACK_PACKAGE_VERSION_MAJOR "${RPCZ_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${RPCZ_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${RPCZ_VERSION_PATCH}")
 
-if(UNIX)
+if(DISTRO_ID MATCHES "Ubuntu")
     # Debian package specific config
     set(CPACK_GENERATOR "DEB")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Philippe Hamelin")
-
-    # On recent Ubuntu versions, RPCZ may be build with either ZMQ 2 or 3
-    if(${ZMQ_VERSION_MAJOR} GREATER 2)
-        # Depends on ZMQ 3
-        set(CPACK_DEBIAN_ZEROMQ_DEPENDS "libzmq3")
-    else()
-        # Depends on ZMQ 2
-         set(CPACK_DEBIAN_ZEROMQ_DEPENDS "libzmq1")
+    if(DISTRO_RELEASE MATCHES "14.04")
+        # On recent Ubuntu versions, RPCZ may be build with either ZMQ 2 or 3
+        if(${ZMQ_VERSION_MAJOR} GREATER 2)
+            # Depends on ZMQ >=3
+            set(CPACK_DEBIAN_ZEROMQ_DEPENDS "libzmq3")
+        else()
+            # Depends on ZMQ 2
+             set(CPACK_DEBIAN_ZEROMQ_DEPENDS "libzmq1")
+        endif()
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_ZEROMQ_DEPENDS}, libboost-thread1.54.0 (>= 1.54.0), libprotobuf8, protobuf-compiler")
+    elseif(DISTRO_RELEASE MATCHES "16.04")
+        # On recent Ubuntu versions, RPCZ may be build with either ZMQ 2 or 3
+        if(${ZMQ_VERSION_MAJOR} GREATER 2)
+            # Depends on ZMQ >=3 (named libzmq5 on Xenial)
+            set(CPACK_DEBIAN_ZEROMQ_DEPENDS "libzmq5")
+        else()
+            # Depends on ZMQ 2
+             set(CPACK_DEBIAN_ZEROMQ_DEPENDS "libzmq1")
+        endif()
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_ZEROMQ_DEPENDS}, libboost-thread1.58.0 (>= 1.58.0), libprotobuf9v5, protobuf-compiler")
     endif()
-
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_ZEROMQ_DEPENDS}, libprotobuf8, protobuf-compiler")
-
 elseif(WIN32)
     set(CPACK_GENERATOR "ZIP")
 endif()
