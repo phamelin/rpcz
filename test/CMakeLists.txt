@@ -8,13 +8,13 @@ add_library(rpcz_gtest_main rpcz_gtest_main.cc)
 include(build_deps)
 BuildDependency(
     GLog
-    http://google-glog.googlecode.com/files/glog-0.3.1-1.tar.gz
+    https://github.com/google/glog/archive/v0.3.4.tar.gz
     GLOG
     libglog)
 
 ExternalProject_Add(
     GTest
-    URL http://googletest.googlecode.com/files/gtest-1.6.0.zip
+    URL https://github.com/google/googletest/archive/release-1.6.0.zip
     INSTALL_COMMAND ""
 )
 ExternalProject_Get_Property(GTest binary_dir)
